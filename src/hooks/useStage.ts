@@ -2,6 +2,7 @@ import React from 'react';
 import { createStage } from '../gameHelpers';
 // Types
 import type { PLAYER } from './usePlayer';
+import levelCleared from "../Sounds/levelCleared.mp3";
 
 export type STAGECELL = [string | number, string];
 export type STAGE = STAGECELL[][];
@@ -9,6 +10,10 @@ export type STAGE = STAGECELL[][];
 export const useStage = (player: PLAYER, resetPlayer: () => void) => {
   const [stage, setStage] = React.useState(createStage());
   const [rowsCleared, setRowsCleared] = React.useState(0);
+  function playlevelClearedSound() {
+    const audio = new Audio(levelCleared);
+    audio.play();
+  }
 
   React.useEffect(() => {
     if (!player.pos) return;
@@ -20,6 +25,8 @@ export const useStage = (player: PLAYER, resetPlayer: () => void) => {
         // If we don't find a 0 it means that the row is full and should be cleared
         if (row.findIndex(cell => cell[0] === 0) === -1) {
           setRowsCleared(prev => prev + 1);
+            // PLAY A ROW CLEARED SOUND HERE ------------
+            playlevelClearedSound();
           // Create an empty row at the beginning of the array to push the Tetrominos down
           // instead of returning the cleared row
           ack.unshift(new Array(newStage[0].length).fill([0, 'clear']) as STAGECELL[]);
